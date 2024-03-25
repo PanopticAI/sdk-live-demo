@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    video {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+  </style>
+</head>
+
+<body>
+    <video id="vid" autoplay="true" playsinline></video>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let video = document.getElementById("vid");
+    let mediaDevices = navigator.mediaDevices;
+
+    // Accessing the user camera and video.
+    mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: false,
+      })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch(alert);
+  });
+</script>
+
+</html>
