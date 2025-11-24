@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VitalScan - Realtime Estimation</title>
-  <link rel="manifest" href="/manifest.json">
+  <title>MyVitals+ - Realtime Estimation</title>
+  <link rel="manifest" href="/realtime-demo/manifest.json">
   <meta name="theme-color" content="#007bff">
   <link rel="apple-touch-icon" href="/icon-192x192.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -71,9 +72,9 @@
       gap: 15px;
     }
 
-    .logo i {
-      font-size: 2.5rem;
-      color: var(--primary);
+    .logo img {
+      height: 40px;
+      width: 40px;
     }
 
     .logo h1 {
@@ -154,6 +155,51 @@
       text-align: center;
       margin-top: 20px;
       margin-bottom: 20px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .status-value-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 32px; /* Ensure consistent height */
+    }
+
+    .heartbeat-container {
+      display: none;
+      align-items: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .heartbeat-container.active {
+      display: flex;
+    }
+
+    .heartbeat-icon {
+      width: 24px;
+      height: 24px;
+      animation: heartbeat 1s ease-in-out infinite;
+    }
+
+    .heartbeat-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes heartbeat {
+      0%, 50%, 100% {
+        transform: scale(1);
+      }
+      25% {
+        transform: scale(1.2);
+      }
     }
 
     .btn-centered {
@@ -294,6 +340,40 @@
       background: var(--gray);
       transform: none;
       box-shadow: none;
+    }
+
+    /* Button disabled state for scan conditions */
+    .btn-primary.btn-disabled {
+      background: var(--gray);
+      color: rgba(255, 255, 255, 0.6);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+      opacity: 0.6;
+    }
+
+    .btn-primary.btn-disabled:hover {
+      background: var(--gray);
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Scanning state styling */
+    .btn-primary.scanning {
+      background: var(--primary);
+      cursor: not-allowed;
+      pointer-events: none;
+      /* Prevent clicks during scanning */
+    }
+
+    .btn-primary.scanning .fa-spinner {
+      animation: fa-spin 1s linear infinite;
+    }
+
+    .btn-primary.scanning:hover {
+      background: var(--primary);
+      transform: none;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
     }
 
     .btn-secondary {
@@ -470,86 +550,48 @@
       color: var(--gray);
     }
 
+    /* 5. History / Conditions - Replaces Start Button when failing (Desktop/Tablet default) */
     .history-section {
-      margin-top: 30px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: var(--card-shadow);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 20px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      display: none;
+      /* Controlled by JS */
+      text-align: center;
     }
 
     .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .history-header h3 {
-      font-size: 1.4rem;
-      color: #fff;
+      display: none;
     }
 
     .table-container {
-      overflow-x: auto;
+      overflow: visible;
     }
 
-    .history-table {
+    /* Style the list items to look like alert pills (Shared style) */
+    #scanConditions ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
     }
 
-    .history-table th {
-      text-align: left;
-      padding: 12px 15px;
-      color: var(--gray);
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .history-table th:nth-child(1) { width: 20%; }
-    .history-table th:nth-child(2) { width: 30%; }
-    .history-table th:nth-child(3) { width: 25%; }
-    .history-table th:nth-child(4) { width: 25%; }
-
-    .history-table td {
-      padding: 12px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .history-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .status-indicator {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    .indicator-normal {
-      background: var(--success);
-    }
-
-    .indicator-warning {
-      background: var(--warning);
-    }
-
-    .indicator-danger {
-      background: var(--danger);
-    }
-
-    .status-light {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 8px;
+    #scanConditions li {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid rgba(220, 53, 69, 0.5);
+      padding: 12px 25px;
+      border-radius: 8px;
+      color: #ffcccc !important;
+      font-size: 1rem;
+      min-width: 300px;
+      display: inline-flex;
+      justify-content: center;
+      box-shadow: none;
+      cursor: default;
     }
 
     footer {
@@ -565,9 +607,17 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .scan-animation {
@@ -581,18 +631,13 @@
     }
 
     @keyframes scan {
-      from { left: -100%; }
-      to { left: 100%; }
-    }
+      from {
+        left: -100%;
+      }
 
-    /* Custom spinner animation for start button */
-    .fa-spinner {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to {
+        left: 100%;
+      }
     }
 
     @media (max-width: 900px) {
@@ -602,6 +647,11 @@
 
       .status-cards {
         grid-template-columns: 1fr;
+      }
+
+      .action-row {
+        flex-direction: column;
+        gap: 15px;
       }
     }
 
@@ -667,89 +717,267 @@
     @media (max-width: 768px) {
       body {
         padding: 10px;
+        background: #0a1929;
+        /* Solid background for better performance/look on mobile */
       }
 
       .container {
-        padding: 10px;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      header {
+        padding: 10px 0;
+        margin-bottom: 10px;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .logo i {
+        font-size: 1.8rem;
+      }
+
+      .logo img {
+        height: 30px;
+        width: 30px;
+      }
+
+      .logo {
+        gap: 8px;
       }
 
       .main-content {
-        display: block;
-        gap: 15px;
-      }
-
-      .scanner-section {
-        padding: 15px;
-        margin-bottom: 20px;
-      }
-
-      .scanner-header {
-        display: block !important;
-        margin-bottom: 15px;
-      }
-
-      .scanner-header > div:first-child {
-        display: none; /* Hide title and subtitle on mobile */
-      }
-
-      .scanner-actions {
-        display: block;
-        text-align: center;
-        margin-bottom: 15px;
-      }
-
-      .status-section {
-        padding: 15px;
-      }
-
-      .status-cards {
-        grid-template-columns: repeat(2, 1fr); /* Keep 2 columns on mobile */
+        position: relative;
+        display: flex;
+        flex-direction: column;
         gap: 10px;
       }
 
-      .health-trends {
-        padding: 15px;
-        margin-top: 20px;
+      /* Unwrap the sections to allow reordering of children */
+      .scanner-section,
+      .status-section {
+        display: contents;
       }
 
+      /* 1. Video Container */
       .scanner-container {
-        padding: 15px;
-        margin-bottom: 15px;
-        min-height: 300px;
+        order: 1;
+        margin-bottom: 5px;
+        min-height: auto;
+        height: 45vh;
+        /* Use viewport height */
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
       }
 
+      #video {
+        object-fit: cover;
+        border-radius: 15px;
+      }
+
+      /* 2. Status Cards (Visible during scanning) */
+      .status-cards {
+        order: 2;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        /* 4 columns for compactness */
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+
+      .status-card {
+        padding: 8px 4px;
+        min-height: auto;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .status-card h3 {
+        font-size: 0.65rem;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .status-value {
+        font-size: 1.1rem;
+        line-height: 1.2;
+      }
+
+      .heartbeat-icon {
+        width: 14px;
+        height: 14px;
+      }
+
+      .status-card p {
+        font-size: 0.6rem;
+        margin-top: 0;
+        display: block;
+        /* Keep units but small */
+      }
+
+      /* 3. Start Button */
+      .scanner-actions {
+        order: 4;
+        /* Moved down to make room for signal viz */
+        margin: 5px 0 15px 0;
+        width: 100%;
+      }
+
+      .btn-centered {
+        width: 100%;
+        justify-content: center;
+        padding: 15px;
+        font-size: 1.1rem;
+      }
+
+      /* 4. Signal Viz - Under Metrics */
+      .signal-visualization-section {
+        order: 3;
+        /* After metrics (order 2) */
+        position: static;
+        width: 100%;
+        height: 120px;
+        margin: 5px 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        transform: none;
+        z-index: auto;
+        pointer-events: auto;
+        display: none;
+        /* Hidden by default */
+      }
+
+      /* Show signal viz only when scanning */
+      body.scanning-active .signal-visualization-section {
+        display: block;
+      }
+
+      .signal-visualization-section h3 {
+        display: none;
+      }
+
+      .signal-visualizer-container {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        padding: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: none;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .signal-visualizer-container canvas,
+      .signal-visualizer-container svg {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain;
+      }
+
+      /* 5. History / Conditions - Replaces Start Button when failing */
+      .history-section {
+        order: 4;
+        /* Same position as scanner-actions */
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 5px 0 15px 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        z-index: auto;
+        /* display controlled by JS */
+      }
+
+      #scanConditions li {
+        width: 80%;
+        /* Slightly wider on mobile */
+      }
+
+      /* Hide history header in overlay mode */
+      .history-section .history-header {
+        display: none;
+      }
+
+      /* Compact table styles for overlay */
+      .history-table th,
+      .history-table td {
+        padding: 2px 5px;
+        font-size: 0.7rem;
+        border: none;
+        color: #ddd;
+      }
+
+      .history-table th {
+        color: #aaa;
+        font-weight: normal;
+      }
+
+      /* Hide when scanning */
+      body.scanning-active .history-section {
+        display: none;
+      }
+
+      /* Hide headers to save space */
+      .scanner-header,
+      .status-header {
+        display: none;
+      }
+
+      /* Adjust camera overlay */
       .camera-overlay-container {
-        position: absolute;
         top: 10px;
         right: 10px;
-        z-index: 10;
-        margin: 5px;
       }
 
       .camera-btn {
         width: 35px;
         height: 35px;
-        font-size: 14px;
+        background: rgba(0, 0, 0, 0.5);
       }
 
       .camera-dropdown {
-        min-width: 180px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        background: rgba(20, 30, 40, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
       }
 
-      .scanner-actions {
-        text-align: center;
-        margin-top: 15px;
+      /* Adjust health trends if visible */
+      .health-trends {
+        display: none;
+        /* Hide trends on mobile to be compact? Or put at bottom */
       }
     }
   </style>
-  <script type="module" crossorigin src="/sdk-live-demo/realtime-demo/assets/index-C3a3rMoG.js"></script>
+  <script type="module" crossorigin src="/realtime-demo/assets/index-7v6TLz6c.js"></script>
 </head>
+
 <body>
   <div class="container">
     <header>
       <div class="logo">
-        <i class="fas fa-heartbeat"></i>
-        <h1>VitalScan</h1>
+        <img src="./logo.svg" alt="MyVitals+ Logo">
+        <h1>MyVitals<sup>+</sup></h1>
       </div>
       <div class="header-icons">
         <button class="icon-btn" id="settingsBtn">
@@ -786,6 +1014,16 @@
             <i class="fas fa-play"></i> Start Scan
           </button>
         </div>
+
+        <div class="history-section">
+          <div class="history-header">
+            <h3>Scan Conditions</h3>
+          </div>
+
+          <div id="scanConditions" class="table-container">
+            <!-- Scan conditions will be displayed here -->
+          </div>
+        </div>
       </div>
 
       <div class="status-section">
@@ -796,7 +1034,16 @@
         <div class="status-cards">
           <div class="status-card">
             <h3>Heart Rate</h3>
-            <div class="status-value" id="pulseValue">--</div>
+            <div class="status-value-container">
+              <div class="status-value" id="pulseValue">--</div>
+              <div class="heartbeat-container" id="heartbeatContainer">
+                <div class="heartbeat-icon" id="heartbeatIcon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff4757"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
             <p>bpm</p>
           </div>
 
@@ -825,27 +1072,22 @@
             <!-- Signal visualizer will be inserted here -->
           </div>
         </div>
-
-        <div class="history-section">
-          <div class="history-header">
-            <h3>Scan Conditions</h3>
-          </div>
-
-          <div id="scanConditions" class="table-container">
-            <!-- Scan conditions will be displayed here -->
-          </div>
-        </div>
       </div>
     </div>
 
     <footer>
-      <p>VitalScan - Realtime Estimation Demo | Modern Health Monitoring</p>
-      <p>© 2025 VitalScan Technologies. All rights reserved.</p>
+      <p>MyVitals+ - Realtime Estimation Demo</p>
+      <p style="margin: 5px 0;">Powered by <a href="https://panoptic.ai" target="_blank"
+          style="color: var(--primary); text-decoration: none; font-weight: 600;">PanopticAI</a></p>
+      <p>© 2025 PanopticAI. All rights reserved.</p>
     </footer>
   </div>
 
-  <div id="error" style="display: none; position: fixed; top: 20px; left: 20px; background: var(--danger); color: white; padding: 15px; border-radius: 8px; z-index: 1001;"></div>
+  <div id="error"
+    style="display: none; position: fixed; top: 20px; left: 20px; background: var(--danger); color: white; padding: 15px; border-radius: 8px; z-index: 1001;">
+  </div>
   <div id="report" style="display: none;"></div>
 
 </body>
+
 </html>
