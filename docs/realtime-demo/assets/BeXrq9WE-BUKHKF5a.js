@@ -1,1 +1,0 @@
-import{r as o}from"./index-7v6TLz6c.js";class d{async loadModels(){}async detect(r){let e=o(r),a=.7,t=.5;return{faceBox:{xCenter:.5,yCenter:.5,width:e.height*t*a/e.width,height:t},landmarks:[],videoFrame:e}}}export{d as DummyFaceDetector};
