@@ -1,0 +1,1 @@
+import{s as r}from"./index-D99TeBRU.js";class d{async loadModels(){}async detect(a){let e=r(a),s=.7,t=.5;return{faceBox:{xCenter:.5,yCenter:.5,width:e.height*t*s/e.width,height:t},landmarks:[],videoFrame:e}}}export{d as DummyFaceDetector};
