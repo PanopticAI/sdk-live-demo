@@ -1,6 +1,6 @@
 {
-  "name": "MyVitals+",
-  "short_name": "MyVitals+",
+  "name": "Realtime Demo",
+  "short_name": "Realtime Demo",
   "description": "Realtime vital sign estimation",
   "start_url": "/",
   "display": "standalone",
