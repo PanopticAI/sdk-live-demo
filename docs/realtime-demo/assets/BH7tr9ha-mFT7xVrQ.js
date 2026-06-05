@@ -1,0 +1,1 @@
+import{n as e}from"./index-_2I1jTg8.js";var t=e(Object.freeze(Object.defineProperty({__proto__:null,default:{}},Symbol.toStringTag,{value:`Module`})));export{t};
